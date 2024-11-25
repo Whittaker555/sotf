@@ -1,6 +1,11 @@
 
 ## Local Run
 
+create a .env file with the following:
+NEXTAUTH_SECRET
+SPOTIFY_CLIENT_ID
+SPOTIFY_CLIENT_SECRET
+
 ```bash
 npm run dev
 ```
