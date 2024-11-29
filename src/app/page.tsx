@@ -1,7 +1,7 @@
 "use client";
 import { useSession } from "next-auth/react";
 import { signIn, signOut } from "next-auth/react";
-import { Suspense, useState } from "react";
+import { useState } from "react";
 import { SpotifyPlaylistResponse } from "./models/spotifyplaylistresponse";
 
 export default function Home() {
@@ -14,38 +14,44 @@ export default function Home() {
   }
   if (session) {
     return (
-      <Suspense>
-        <div className="p-6">
-          <p className="text-white font-normal text-xl mt-5 mb-2">
-            Signed In as
-          </p>
-          <span className="bold-txt">{session?.user?.name}</span>
-          {playlist?.items
-            .filter((item) => item !== null)
-            .map((item) => (
-              <div
-                key={item?.id}
-                className="flex items-center justify-between w-96 h-24 bg-white rounded-xl p-4 mt-4"
-              >
-                <div className="flex flex-col ml-4">
-                  <p className="text-black font-bold">{item?.name}</p>
-                  <a
-                    href={item?.external_urls.spotify}
-                    className="text-blue-500 underline"
+      <div className="p-6">
+        <p className="text-white font-normal text-xl mt-5 mb-2">Signed In as</p>
+        <span className="bold-txt">{session?.user?.name}</span>
+
+        {playlist?.items && (
+          <div>
+            <p className="text-white font-normal text-xl mt-5 mb-2">
+              Your Playlists
+            </p>
+            <ul>
+              {playlist?.items
+                .filter((item) => item !== null)
+                .map((item) => (
+                  <div
+                    key={item?.id}
+                    className="flex items-center justify-between w-96 h-24 bg-white rounded-xl p-4 mt-4"
                   >
-                    Open in Spotify
-                  </a>
-                </div>
-              </div>
-            ))}
-          <p
-            className="opacity-70 mt-8 mb-5 underline cursor-pointer"
-            onClick={() => signOut()}
-          >
-            Sign Out
-          </p>
-        </div>
-      </Suspense>
+                    <div className="flex flex-col ml-4">
+                      <p className="text-black font-bold">{item?.name}</p>
+                      <a
+                        href={item?.external_urls.spotify}
+                        className="text-blue-500 underline"
+                      >
+                        Open in Spotify
+                      </a>
+                    </div>
+                  </div>
+                ))}
+            </ul>
+          </div>
+        )}
+        <p
+          className="opacity-70 mt-8 mb-5 underline cursor-pointer"
+          onClick={() => signOut()}
+        >
+          Sign Out
+        </p>
+      </div>
     );
   } else {
     return (
