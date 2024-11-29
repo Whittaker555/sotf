@@ -2,6 +2,7 @@
 import { useSession } from "next-auth/react";
 import { signIn, signOut } from "next-auth/react";
 import { useState } from "react";
+import Image from "next/image";
 import { SpotifyPlaylistResponse } from "./models/spotifyplaylistresponse";
 
 export default function Home() {
@@ -12,6 +13,7 @@ export default function Home() {
       .then((res) => res.json())
       .then((data) => setPlaylist(data));
   }
+
   if (session) {
     return (
       <div className="p-6">
@@ -31,6 +33,15 @@ export default function Home() {
                     key={item?.id}
                     className="flex items-center justify-between w-96 h-24 bg-white rounded-xl p-4 mt-4"
                   >
+                    {item?.images && (
+                      <Image
+                        src={item?.images[0]?.url}
+                        alt="Playlist Image"
+                        width={100}
+                        height={100}
+                        className="w-16 h-16 rounded-lg"
+                      />
+                    )}
                     <div className="flex flex-col ml-4">
                       <p className="text-black font-bold">{item?.name}</p>
                       <a
