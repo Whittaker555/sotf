@@ -1,6 +1,8 @@
 import NextAuth from "next-auth/next";
 import { type NextAuthOptions } from "next-auth";
 import SpotifyProvider from 'next-auth/providers/spotify';
+import { error } from "console";
+import { JWT } from "next-auth/jwt";
 
 const scopes = "user-read-private user-read-email ugc-image-upload user-read-playback-state user-modify-playback-state user-read-currently-playing playlist-read-private playlist-read-collaborative user-read-recently-played";
 const options: NextAuthOptions = {
@@ -23,6 +25,7 @@ const options: NextAuthOptions = {
                 return token
             }
             console.log("Token expired")
+            refreshToken(token);
             return token;
         },
         async session({ session, token }) {
@@ -34,6 +37,36 @@ const options: NextAuthOptions = {
 }
 
 const handler = NextAuth(options);
+
+async function refreshToken(token: JWT) {
+    try{
+        const response = await fetch("https://accounts.spotify.com/api/token", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                Authorization: "Basic " + Buffer.from(process.env.SPOTIFY_CLIENT_ID + ":" + process.env.SPOTIFY_CLIENT_SECRET).toString("base64")
+            },
+            body: new URLSearchParams({
+                grant_type: "refresh_token",
+                refresh_token: token.refreshToken ?? ''
+            })
+        });
+        const data = await response.json();
+        console.log(data);
+        return {
+            ...token,
+            access_token: data.access_token,
+            accessTokenExpires: Date.now() + data.expires_in
+        }
+    }catch(e){
+        console.log(e);
+        return {
+            ...token,
+            error: "Refresh token failed"
+        }
+    }
+}
+
 
 export { handler as GET, handler as POST };
 
