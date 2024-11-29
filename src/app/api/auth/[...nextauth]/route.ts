@@ -39,6 +39,12 @@ const handler = NextAuth(options);
 
 async function refreshToken(token: JWT) {
     try{
+        if (token.refreshToken === undefined) {
+            return {
+                ...token,
+                error: "Refresh token not found"
+            }
+        }
         const response = await fetch("https://accounts.spotify.com/api/token", {
             method: "POST",
             headers: {
@@ -47,11 +53,11 @@ async function refreshToken(token: JWT) {
             },
             body: new URLSearchParams({
                 grant_type: "refresh_token",
-                refresh_token: token.refreshToken ?? ''
-            })
+                refresh_token: token.refreshToken as string
+            }),
+            cache: "no-cache"
         });
         const data = await response.json();
-        console.log(data);
         return {
             ...token,
             access_token: data.access_token,
