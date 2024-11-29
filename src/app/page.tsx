@@ -27,11 +27,6 @@ export default function Home() {
                 key={item?.id}
                 className="flex items-center justify-between w-96 h-24 bg-white rounded-xl p-4 mt-4"
               >
-                <img
-                  src={item?.images ? item?.images[0].url : undefined}
-                  alt=""
-                  className="w-16 h-16 rounded-lg"
-                />
                 <div className="flex flex-col ml-4">
                   <p className="text-black font-bold">{item?.name}</p>
                   <a
