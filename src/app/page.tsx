@@ -7,12 +7,14 @@ import { SpotifyPlaylistResponse } from "./models/spotifyplaylistresponse";
 
 export default function Home() {
   const { data: session } = useSession();
-  session?.error && console.error(session.error);
   const [playlist, setPlaylist] = useState<SpotifyPlaylistResponse>();
   if (session && !playlist) {
     fetch("/api/spotify")
       .then((res) => res.json())
       .then((data) => setPlaylist(data));
+  }
+  if (session?.error) {
+    return <div>{session.error}</div>;
   }
 
   if (session) {
