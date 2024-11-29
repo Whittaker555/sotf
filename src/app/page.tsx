@@ -10,7 +10,12 @@ export default function Home() {
   const [playlist, setPlaylist] = useState<SpotifyPlaylistResponse>();
   if (session && !playlist) {
     fetch("/api/spotify")
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to fetch");
+        }
+        return res.json();
+      })
       .then((data) => setPlaylist(data));
   }
   if (session?.error) {
