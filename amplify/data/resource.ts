@@ -10,16 +10,10 @@ const schema = a.schema({
   Todo: a
     .model({
       content: a.string(),
+      isDone: a.boolean(),
     })
     .authorization((allow) => [allow.guest()]),
 });
-
-Playlist : a.customType({
-  userId: a.string(),
-  playlistId: a.string(),
-  playlistName: a.string(),
-  playlistImage: a.string(),
-})
 
 export type Schema = ClientSchema<typeof schema>;
 
