@@ -23,14 +23,13 @@ const options: NextAuthOptions = {
             if(Date.now() < token.accessTokenExpires! * 1000){
                 return token
             }
-            console.log("Token expired")
             refreshToken(token);
             return token;
         },
         async session({ session, token }) {
             session.accessToken = token.access_token as string;
             return session;
-        },
+        }
     },
     secret: process.env.NEXTAUTH_SECRET,
 }

@@ -8,7 +8,7 @@ export interface SpotifyPlaylistResponse {
     items: (SpotifyPlaylistItem | null)[];
   }
   
-  interface SpotifyPlaylistItem {
+  export interface SpotifyPlaylistItem {
     name: string;
     collaborative: boolean;
     description: string;
