@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import AuthProvider from "./authprovider";
+import { Amplify } from 'aws-amplify';
+import outputs from '../../amplify_outputs.json'
+
+Amplify.configure(outputs);
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
