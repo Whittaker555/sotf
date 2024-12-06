@@ -2,7 +2,6 @@
 import { signOut, useSession } from "next-auth/react";
 import { SpotifyPlaylistResponse } from "../models/spotifyplaylistresponse";
 import { useState } from "react";
-import Image from "next/image";
 import PlaylistCard from "./components/playlistCard";
 
 export default function Playlists() {
