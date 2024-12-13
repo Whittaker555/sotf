@@ -3,9 +3,6 @@ import { signIn, signOut, useSession } from "next-auth/react";
 
 export default function LogIn() {
   const { data: session } = useSession();
-
-  // if there is a session then return a red sign out button otherwise return a green connect button
-
     return (
         <div>
         {session ? (

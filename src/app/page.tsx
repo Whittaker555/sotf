@@ -29,7 +29,7 @@ export default function Home() {
 
   return (
     <div className="flex justify-center items-center h-screen">
-      <h1 className="text-6xl">
+      <h1 className="text-6xl tracking-wide">
         {displayedText} {extraText}
       </h1>
     </div>
