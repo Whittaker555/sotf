@@ -18,7 +18,7 @@ export default function PlaylistCard(item: SpotifyPlaylistItem ) {
           />
         )}
         <div className="flex flex-col ml-4">
-          <p className="text-black font-bold">{item?.name}</p>
+          <p className="text-black">{item?.name}</p>
           <a
             href={item?.external_urls.spotify}
             className="text-blue-500 underline"

@@ -23,9 +23,6 @@ export default function Playlists() {
   }
   return (
     <div className="p-6">
-      <p className="text-white font-normal text-xl mt-5 mb-2">Signed In as</p>
-      <span className="bold-txt">{session?.user?.name}</span>
-
       {playlist?.items && (
         <div>
           <p className="text-white font-normal text-xl mt-5 mb-2">
@@ -34,18 +31,10 @@ export default function Playlists() {
           <ul>
             {playlist?.items
               .filter((item) => item !== null)
-              .map((item) => (
-               PlaylistCard(item)
-              ))}
+              .map((item) => PlaylistCard(item))}
           </ul>
         </div>
       )}
-      <p
-        className="opacity-70 mt-8 mb-5 underline cursor-pointer"
-        onClick={() => signOut({ callbackUrl: '/', redirect:true })}
-      >
-        Sign Out
-      </p>
     </div>
-    );
+  );
 }
