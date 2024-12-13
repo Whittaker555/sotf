@@ -1,5 +1,5 @@
 "use client";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { SpotifyPlaylistResponse } from "../models/spotifyplaylistresponse";
 import { useState } from "react";
 import PlaylistCard from "./components/playlistCard";
