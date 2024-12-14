@@ -23,8 +23,37 @@ const options: NextAuthOptions = {
             if(Date.now() < token.accessTokenExpires! * 1000){
                 return token
             }
-            refreshToken(token);
-            return token;
+            
+            try{
+                if (token.refreshToken === undefined) {
+                    return {
+                        ...token,
+                        error: "Refresh token not found"
+                    }
+                }
+
+                const response = await fetch("https://accounts.spotify.com/api/token", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        Authorization: "Basic " + Buffer.from(process.env.SPOTIFY_CLIENT_ID + ":" + process.env.SPOTIFY_CLIENT_SECRET).toString("base64"),
+                    },
+                    body: `grant_type=refresh_token&refresh_token=${token.refreshToken}`,
+                    cache: "no-cache"
+                });
+                const data = await response.json();
+                return {
+                    ...token,
+                    access_token: data.access_token,
+                    accessTokenExpires: Date.now() + data.expires_in
+                }
+            }catch(e){
+                console.log(e);
+                return {
+                    ...token,
+                    error: "Refresh token failed"
+                }
+            }
         },
         async session({ session, token }) {
             session.accessToken = token.access_token as string;
@@ -35,42 +64,6 @@ const options: NextAuthOptions = {
 }
 
 const handler = NextAuth(options);
-
-async function refreshToken(token: JWT) {
-    try{
-        if (token.refreshToken === undefined) {
-            return {
-                ...token,
-                error: "Refresh token not found"
-            }
-        }
-        const response = await fetch("https://accounts.spotify.com/api/token", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-                Authorization: "Basic " + Buffer.from(process.env.SPOTIFY_CLIENT_ID + ":" + process.env.SPOTIFY_CLIENT_SECRET).toString("base64")
-            },
-            body: new URLSearchParams({
-                grant_type: "refresh_token",
-                refresh_token: token.refreshToken as string
-            }),
-            cache: "no-cache"
-        });
-        const data = await response.json();
-        return {
-            ...token,
-            access_token: data.access_token,
-            accessTokenExpires: Date.now() + data.expires_in
-        }
-    }catch(e){
-        console.log(e);
-        return {
-            ...token,
-            error: "Refresh token failed"
-        }
-    }
-}
-
 
 export { handler as GET, handler as POST };
 
