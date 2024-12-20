@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
 export default function Home() {
   const headerText = "survival of the fittest";
   const [displayedText, setDisplayedText] = useState("");

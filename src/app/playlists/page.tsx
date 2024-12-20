@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import PlaylistCard from "./components/playlistCard";
 import PlaylistDetails from "./components/playlistDetails";
 import PlaylistDetailsSection from "./components/playlistDetails";
+import {Button, Modal} from "flowbite-react";
 
 interface ErrorResponse {
   status: number;
@@ -17,11 +18,11 @@ export interface PlaylistDetails {
         href: string;
         name: string;
       };
-      href: string; 
+      href: string;
       name: string;
     };
     added_by: {
-      id: string; 
+      id: string;
     };
   }>;
 }
@@ -32,6 +33,7 @@ export default function Playlists() {
   const [playlistId, setPlaylistId] = useState<string>();
   const [playlistDetails, setPlaylistDetails] = useState<PlaylistDetails>();
   const [error, setError] = useState<ErrorResponse>();
+  const[showModal, setShowModal] = useState(false);
 
   if (session && !playlistArray && !error) {
     fetch("/api/spotify/playlists")
@@ -50,7 +52,7 @@ export default function Playlists() {
       });
   }
 
-  useEffect(() => { 
+  useEffect(() => {
     if (!playlistId) {
       return;
     }
@@ -71,6 +73,29 @@ export default function Playlists() {
   }
   const onPlaylistClick = (item: string) => {
     setPlaylistId(item);
+    setShowModal(true);
+  };
+
+  const handleTrackPlaylist = () => {
+    if (!playlistId) {
+      return;
+    }
+    fetch(`/api/spotify/playlists`, {
+      method: 'POST', 
+      body: JSON.stringify({'playlistId': playlistId})
+    })
+    .then((res) => {
+      console.log(res)
+      if (!res.ok) {
+        throw new Error("Failed to fetch");
+      }
+      return res.json();
+    })
+    .then((data) => {
+      console.log(data);
+    }).finally(() => {
+      setShowModal(false);
+    });
   };
 
   return (
@@ -88,7 +113,29 @@ export default function Playlists() {
                 .map((item) => PlaylistCard(item, onPlaylistClick))}
             </ul>
           </div>
-          <div>{playlistDetails && PlaylistDetailsSection(playlistDetails)}</div>
+          <div>
+            {playlistDetails && PlaylistDetailsSection(playlistDetails)}
+          </div>
+          
+                
+      <Modal show={showModal} id="modal" title="Track Playlist?" onClose={() => setShowModal(false)}>
+      <Modal.Header>Track Playlist {playlistId}</Modal.Header>
+        <Modal.Body>
+          <div className="space-y-6">
+            <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+              Do you want to track playlist {playlistId}?
+            </p>
+          
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={() => handleTrackPlaylist()}>Yes</Button>
+          <Button color="gray" onClick={() => setShowModal(false)}>
+            No
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
         </div>
       )}
     </div>
