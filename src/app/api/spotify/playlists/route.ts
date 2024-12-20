@@ -15,7 +15,9 @@ export async function GET(req: NextRequest) {
     }
   )
     .then((res) => res.json())
-    .then((data) => NextResponse.json(data))
+    .then((data) => {
+      return NextResponse.json(data);
+    })
     .catch((error) => {
       console.error("Error fetching Spotify user data:", error);
       return NextResponse.json(
