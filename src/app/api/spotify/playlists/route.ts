@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
 
   const client = generateClient<Schema>();
-
+  console.log(req);
 
   const { data, errors } = await client.mutations.addPlaylistId({
     id: "1",
