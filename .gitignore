@@ -38,3 +38,8 @@ jspm_packages
 .next
 .env
 .DS_Store
+
+# amplify
+.amplify
+amplify_outputs*
+amplifyconfiguration*
