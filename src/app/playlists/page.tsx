@@ -89,7 +89,7 @@ export default function Playlists() {
         throw new Error("Network response was not ok");
       }
 
-      const data = await response.json();
+      await response.json();
     } catch (error) {
       console.error("Error calling API:", error);
     }
