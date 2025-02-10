@@ -71,10 +71,8 @@ export default function Playlists() {
   }
 
   const onPlaylistClick = async (item: string) => {
-
-    console.log(process.env.BASE_URL)
     try {
-      const response = await fetch(`${process.env.API_URL}/api/user`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}api/user`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
