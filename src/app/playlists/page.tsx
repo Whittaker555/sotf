@@ -69,7 +69,30 @@ export default function Playlists() {
   if (session?.error) {
     return <div>{session.error}</div>;
   }
-  const onPlaylistClick = (item: string) => {
+
+  const onPlaylistClick = async (item: string) => {
+
+    console.log(process.env.BASE_URL)
+    try {
+      const response = await fetch(`${process.env.API_URL}/api/user`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: session?.user?.name,
+          playlistId: item 
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+    } catch (error) {
+      console.error("Error calling API:", error);
+    }
     setPlaylistId(item);
   };
 
