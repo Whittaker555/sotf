@@ -18,6 +18,7 @@ export interface SpotifyPlaylistResponse {
     href: string;
     id: string;
     images: SpotifyImage[];
+    isExisting: boolean;
   }
   
   interface SpotifyImage {

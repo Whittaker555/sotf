@@ -46,6 +46,7 @@ export default function Playlists() {
           setError(data.error);
           return;
         }
+        console.log(data)
         setPlaylistArray(data);
       });
   }
@@ -72,22 +73,33 @@ export default function Playlists() {
 
   const onPlaylistClick = async (item: string) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}api/user`, {
+      const response = await fetch('/api/spotify/playlists', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          userId: session?.user?.name,
-          playlistId: item 
-        }),
+        body: JSON.stringify({ playlistId: item }),
       });
       
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
-
-      await response.json();
+      // todo have the post return so dont need to double call from front end 
+      fetch("/api/spotify/playlists")
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to fetch");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        if (data.error) {
+          setError(data.error);
+          return;
+        }
+        console.log(data)
+        setPlaylistArray(data);
+      });
     } catch (error) {
       console.error("Error calling API:", error);
     }
