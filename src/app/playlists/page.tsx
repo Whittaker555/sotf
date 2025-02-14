@@ -97,7 +97,6 @@ export default function Playlists() {
           setError(data.error);
           return;
         }
-        console.log(data)
         setPlaylistArray(data);
       });
     } catch (error) {

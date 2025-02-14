@@ -1,6 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
+interface SpotifyPlaylistItem {
+  id: string;
+  // You can add additional properties from the Spotify playlist object as needed.
+  [key: string]: unknown;
+}
+
+interface SpotifyPlaylistsResponse {
+  items: SpotifyPlaylistItem[];
+  // Other properties from the response can be defined here.
+  [key: string]: unknown;
+}
+
 export async function GET(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   if (!token || !token.access_token || !token.sub) {
@@ -12,7 +24,8 @@ export async function GET(req: NextRequest) {
     const existingResponse = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}api/user/${token.name}`
     );
-    const existingPlaylists = await existingResponse.json();
+    // Assuming the response is an array of playlist IDs.
+    const existingPlaylists: string[] = await existingResponse.json();
 
     // Fetch Spotify playlists.
     const spotifyResponse = await fetch(
@@ -23,13 +36,13 @@ export async function GET(req: NextRequest) {
         },
       }
     );
-    const allUserPlaylists = await spotifyResponse.json();
+    const allUserPlaylists: SpotifyPlaylistsResponse = await spotifyResponse.json();
     const existingIds = new Set(existingPlaylists);
 
     // Map over the Spotify playlists and add an "isExisting" flag.
-    const modifiedPlaylists = {
+    const modifiedPlaylists: SpotifyPlaylistsResponse = {
       ...allUserPlaylists,
-      items: allUserPlaylists.items.map((playlist: any) => ({
+      items: allUserPlaylists.items.map((playlist: SpotifyPlaylistItem) => ({
         ...playlist,
         isExisting: existingIds.has(playlist.id),
       })),
@@ -45,18 +58,15 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  // Retrieve the token from the request using next-auth's JWT helper.
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   if (!token || !token.access_token || !token.sub) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
   try {
-    // Parse the incoming JSON payload.
-    // Expecting a JSON object with a "playlistId" property.
-    const { playlistId } = await req.json();
+    // Expecting the payload to have a "playlistId" property.
+    const { playlistId }: { playlistId: string } = await req.json();
 
-    // Call your API endpoint to log the playlist for the user.
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}api/user`, {
       method: "POST",
       headers: {
@@ -68,18 +78,22 @@ export async function POST(req: NextRequest) {
       }),
     });
 
-    // Check for a successful response.
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
 
-    // Return the API's JSON response.
     const data = await response.json();
     return NextResponse.json(data);
-  } catch (error: any) {
-    console.error("Error calling API:", error);
+  } catch (error) {
+    console.error(
+      "Error calling API:",
+      error instanceof Error ? error.message : String(error)
+    );
     return NextResponse.json(
-      { message: "Error calling API", error: error.message },
+      {
+        message: "Error calling API",
+        error: error instanceof Error ? error.message : String(error),
+      },
       { status: 500 }
     );
   }
