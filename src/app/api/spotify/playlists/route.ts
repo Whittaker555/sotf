@@ -98,3 +98,44 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  if (!token || !token.access_token || !token.sub) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const { playlistId }: { playlistId: string } = await req.json();
+
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}api/user`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId: token.name,
+        playlistId,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    const data = await response.json();
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error(
+      "Error calling API:",
+      error instanceof Error ? error.message : String(error)
+    );
+    return NextResponse.json(
+      {
+        message: "Error calling API",
+        error: error instanceof Error ? error.message : String(error),
+      },
+      { status: 500 }
+    );
+  }
+}

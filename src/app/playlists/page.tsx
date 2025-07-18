@@ -77,34 +77,50 @@ export default function Playlists() {
 
   const onPlaylistClick = async (item: string) => {
     try {
+      const existing = playlistArray?.items.find((p) => p?.isExisting);
+      if (existing && existing.id !== item) {
+        const delRes = await fetch('/api/spotify/playlists', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ playlistId: existing.id }),
+        });
+
+        if (!delRes.ok) {
+          throw new Error('Delete request failed');
+        }
+      }
+
       const response = await fetch('/api/spotify/playlists', {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ playlistId: item }),
       });
-      
+
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        throw new Error('Network response was not ok');
       }
+
       // todo have the post return so don’t need to double call from front end
-      fetch("/api/spotify/playlists")
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Failed to fetch");
-        }
-        return res.json();
-      })
-      .then((data) => {
-        if (data.error) {
-          setError(data.error);
-          return;
-        }
-        setPlaylistArray(data);
-      });
+      fetch('/api/spotify/playlists')
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error('Failed to fetch');
+          }
+          return res.json();
+        })
+        .then((data) => {
+          if (data.error) {
+            setError(data.error);
+            return;
+          }
+          setPlaylistArray(data);
+        });
     } catch (error) {
-      console.error("Error calling API:", error);
+      console.error('Error calling API:', error);
     }
     setPlaylistId(item);
   };
