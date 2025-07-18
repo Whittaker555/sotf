@@ -33,7 +33,11 @@ export default function Playlists() {
   const [playlistDetails, setPlaylistDetails] = useState<PlaylistDetails>();
   const [error, setError] = useState<ErrorResponse>();
 
-  if (session && !playlistArray && !error) {
+  useEffect(() => {
+    if (!session || playlistArray || error) {
+      return;
+    }
+
     fetch("/api/spotify/playlists")
       .then((res) => {
         if (!res.ok) {
@@ -46,10 +50,10 @@ export default function Playlists() {
           setError(data.error);
           return;
         }
-        console.log(data)
+        console.log(data);
         setPlaylistArray(data);
       });
-  }
+  }, [session]);
 
   useEffect(() => { 
     if (!playlistId) {
