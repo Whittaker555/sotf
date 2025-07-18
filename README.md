@@ -5,6 +5,7 @@ create a .env file with the following:
 NEXTAUTH_SECRET
 SPOTIFY_CLIENT_ID
 SPOTIFY_CLIENT_SECRET
+NEXT_PUBLIC_API_URL - API base URL
 
 ```bash
 npm run dev
