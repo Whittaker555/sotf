@@ -44,7 +44,10 @@ const options: NextAuthOptions = {
                 return {
                     ...token,
                     access_token: data.access_token,
-                    accessTokenExpires: Date.now() + data.expires_in
+                    // Spotify returns expires_in in seconds. Convert to an
+                    // absolute expiry time in seconds to match the initial
+                    // `account.expires_at` value.
+                    accessTokenExpires: Math.floor(Date.now() / 1000 + data.expires_in)
                 }
             }catch(e){
                 console.log(e);
