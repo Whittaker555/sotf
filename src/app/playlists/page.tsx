@@ -1,7 +1,7 @@
 "use client";
 import { useSession } from "next-auth/react";
 import { SpotifyPlaylistResponse } from "../models/spotifyplaylistresponse";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import PlaylistCard from "./components/playlistCard";
 import PlaylistDetails from "./components/playlistDetails";
 import PlaylistDetailsSection from "./components/playlistDetails";
@@ -32,6 +32,15 @@ export default function Playlists() {
   const [playlistId, setPlaylistId] = useState<string>();
   const [playlistDetails, setPlaylistDetails] = useState<PlaylistDetails>();
   const [error, setError] = useState<ErrorResponse>();
+  const carouselRef = useRef<HTMLDivElement>(null);
+
+  const scrollLeft = () => {
+    carouselRef.current?.scrollBy({ left: -300, behavior: "smooth" });
+  };
+
+  const scrollRight = () => {
+    carouselRef.current?.scrollBy({ left: 300, behavior: "smooth" });
+  };
 
   useEffect(() => {
     if (!session || playlistArray || error) {
@@ -113,18 +122,33 @@ export default function Playlists() {
     <div className="p-6">
       {error && <div>{error.message}</div>}
       {playlistArray?.items && (
-        <div className="flex flex-row">
-          <div className="basis-4/12 ">
-            <p className="text-white font-normal text-xl mt-5 mb-2">
-              Your Playlists
-            </p>
-            <ul>
+        <div>
+          <p className="text-white font-normal text-xl mt-5 mb-2">Your Playlists</p>
+          <div className="relative">
+            <button
+              onClick={scrollLeft}
+              className="absolute left-0 top-1/2 -translate-y-1/2 bg-gray-700 bg-opacity-50 text-white px-2 py-1 rounded-full"
+            >
+              &lt;
+            </button>
+            <div
+              ref={carouselRef}
+              className="flex overflow-x-auto no-scrollbar space-x-4 py-2 px-8"
+            >
               {playlistArray?.items
                 .filter((item) => item !== null)
                 .map((item) => PlaylistCard(item, onPlaylistClick))}
-            </ul>
+            </div>
+            <button
+              onClick={scrollRight}
+              className="absolute right-0 top-1/2 -translate-y-1/2 bg-gray-700 bg-opacity-50 text-white px-2 py-1 rounded-full"
+            >
+              &gt;
+            </button>
           </div>
-          <div>{playlistDetails && PlaylistDetailsSection(playlistDetails)}</div>
+          <div className="mt-6">
+            {playlistDetails && PlaylistDetailsSection(playlistDetails)}
+          </div>
         </div>
       )}
     </div>
