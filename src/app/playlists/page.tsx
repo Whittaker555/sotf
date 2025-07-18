@@ -84,7 +84,7 @@ export default function Playlists() {
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
-      // todo have the post return so dont need to double call from front end 
+      // todo have the post return so don’t need to double call from front end
       fetch("/api/spotify/playlists")
       .then((res) => {
         if (!res.ok) {
